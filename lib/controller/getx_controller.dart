@@ -14,7 +14,7 @@ class Homecontroller extends GetxController {
 
   final formKey = GlobalKey<FormState>();
 
-  List<DateTime> parsedTimeList = [];
+  List<dynamic> parsedTimeList = [];
   List<dynamic> numberOfDays = [];
   TextEditingController title = TextEditingController();
   TextEditingController description = TextEditingController();

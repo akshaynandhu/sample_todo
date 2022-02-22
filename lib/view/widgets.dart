@@ -130,18 +130,22 @@ class ListTask extends StatelessWidget {
               return ListView.builder(
                 itemBuilder: (con, index) {
                   final indexedKey = key[index];
-
-                  final TodoModel? studentLog =
+                  final TodoModel? todoDetails =
                       homeController.todoBox.get(indexedKey);
-                  debugPrint("SINGLE TODO DETAIL IS ${studentLog.toString()}");
-                  final time = studentLog?.time;
-                  final parsedTime = DateTime.parse(time);
-                  homeController.parsedTimeList.add(parsedTime);
-                  final dayDifference =
-                      (DateTime.now().difference(parsedTime).inDays) * -1;
-                  homeController.numberOfDays.add(dayDifference);
+                  debugPrint("SINGLE TODO DETAIL IS ${todoDetails?.time.toString()}");
+                  final time = todoDetails?.time;
+                  var parsedTime,dayDifference;
+                  debugPrint("RUNTIME TYPE is ${time.runtimeType}");
+                  if(time != ""){
+                    parsedTime = DateTime.parse(time);
+                    homeController.parsedTimeList.add(parsedTime);
+                    dayDifference =
+                        (DateTime.now().difference(parsedTime).inDays) * -1;
+                    homeController.numberOfDays.add(dayDifference);
+                  }else{
+                    parsedTime = "";
+                  }
 
-                  debugPrint("The Remaining Days are $dayDifference");
                   return key.isEmpty
                       ? const Center(
                           child: Text(
@@ -151,297 +155,294 @@ class ListTask extends StatelessWidget {
                         )
                       : Column(
                           children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 15.0, left: 22),
-                              child: Dismissible(
-                                background: Padding(
-                                  padding: const EdgeInsets.only(right: 22.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(60),
-                                      color: Colors.red,
-                                    ),
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.delete,
-                                        color: Colors.white,
-                                      ),
+                            Dismissible(
+                              background: Padding(
+                                padding: const EdgeInsets.only(right: 22.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(60),
+                                    color: Colors.red,
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
-                                key: ValueKey<int>(indexedKey),
-                                direction: DismissDirection.endToStart,
-                                confirmDismiss: (direction) async {
-                                  if (direction ==
-                                      DismissDirection.endToStart) {
-                                    final bool res = await showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            backgroundColor: Colors.white,
-                                            content: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                const Text(
-                                                  " Are you sure want to delete?",
-                                                  style: TextStyle(
-                                                    color: Colors.redAccent,
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  height: 40,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
-                                                  children: [
-                                                    TextButton(
-                                                      style: ButtonStyle(
-                                                        backgroundColor:
-                                                            MaterialStateProperty
-                                                                .all(
-                                                          Colors.redAccent,
-                                                        ),
-                                                      ),
-                                                      onPressed: () {
-                                                        homeController
-                                                            .todoBox
-                                                            .delete(
-                                                          indexedKey,
-                                                        );
-                                                        Navigator.of(context)
-                                                            .pop(true);
-                                                      },
-                                                      child: const Text(
-                                                        "Yes",
-                                                        style: TextStyle(
-                                                          fontFamily: "Poppins",
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    TextButton(
-                                                      style: ButtonStyle(
-                                                        backgroundColor:
-                                                            MaterialStateProperty
-                                                                .all(
-                                                          Colors.redAccent,
-                                                        ),
-                                                      ),
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop(false);
-                                                      },
-                                                      child: const Text(
-                                                        "No",
-                                                        style: TextStyle(
-                                                            fontFamily:
-                                                                "Poppins",
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w500),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )
-                                              ],
-                                            ),
-                                          );
-                                        });
-                                    return res;
-                                  } else {
-                                    Navigator.pop(context);
-                                  }
-                                },
-                                child: GestureDetector(
-                                  onTap: () {
-                                    final CustomTimerController _controller =
-                                        CustomTimerController();
-                                    _controller.start();
-                                    debugPrint(
-                                        "SEnding days are ${homeController.numberOfDays[index]}");
-                                    showDialog(
+                              ),
+                              key: ValueKey<int>(indexedKey),
+                              direction: DismissDirection.endToStart,
+                              confirmDismiss: (direction) async {
+                                if (direction ==
+                                    DismissDirection.endToStart) {
+                                  final bool res = await showDialog(
                                       context: context,
                                       builder: (context) {
-                                        var title = studentLog!.title;
-                                        var description =
-                                            studentLog.description;
                                         return AlertDialog(
-                                          title: const Text(
-                                            'TASK',
-                                            style: TextStyle(
-                                              color: Colors.redAccent,
-                                            ),
-                                          ),
                                           backgroundColor: Colors.white,
-                                          content: SingleChildScrollView(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Form(
-                                                    child: TextFormField(
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                      ),
-                                                      onChanged: (string) {
-                                                        title = string;
-                                                      },
-                                                      initialValue:
-                                                          (studentLog.title),
-                                                      validator: (value) {
-                                                        if (value!.isEmpty ||
-                                                            value[0] == " ") {
-                                                          return "This field is required";
-                                                        }
-                                                      },
-                                                      keyboardType:
-                                                          TextInputType.name,
-                                                      decoration:
-                                                          const InputDecoration(
-                                                        icon: Icon(
-                                                          Icons.title,
-                                                          color: Colors.redAccent,
-                                                        ),
-                                                        hintStyle: TextStyle(
-                                                          color: Colors.grey,
-                                                          fontWeight:
-                                                              FontWeight.w900,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Text(
+                                                " Are you sure want to delete?",
+                                                style: TextStyle(
+                                                  color: Colors.redAccent,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w600,
                                                 ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Form(
-                                                    child: TextFormField(
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                      ),
-                                                      onChanged: (string) {
-                                                        description = string;
-                                                      },
-                                                      initialValue: studentLog
-                                                          .description,
-                                                      validator: (value) {
-                                                        if (value!.isEmpty ||
-                                                            value[0] == " ") {
-                                                          return "This field is required";
-                                                        }
-                                                      },
-                                                      autovalidateMode:
-                                                          AutovalidateMode
-                                                              .onUserInteraction,
-                                                      decoration:
-                                                      const InputDecoration(
-                                                        icon:  Icon(
-                                                          Icons.description,
-                                                          color: Colors.redAccent,
-                                                        ),
-                                                        hintText: "Description",
-                                                        hintStyle: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w900),
+                                              ),
+                                              const SizedBox(
+                                                height: 40,
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  TextButton(
+                                                    style: ButtonStyle(
+                                                      backgroundColor:
+                                                          MaterialStateProperty
+                                                              .all(
+                                                        Colors.redAccent,
                                                       ),
                                                     ),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: CustomTimer(
-                                                    controller: _controller,
-                                                    begin: Duration(
-                                                      days: homeController
-                                                          .numberOfDays[index],
-                                                      hours: homeController
-                                                          .parsedTimeList[index]
-                                                          .hour,
-                                                      minutes: homeController
-                                                          .parsedTimeList[index]
-                                                          .minute,
-                                                    ),
-                                                    end: const Duration(),
-                                                    builder: (time) {
-                                                      return Text(
-                                                        "${time.hours}:${time.minutes}:${time.seconds}",
-                                                        style: const TextStyle(
-                                                          fontSize: 16.0,
-                                                          color: Colors.black,
-                                                        ),
+                                                    onPressed: () {
+                                                      homeController
+                                                          .todoBox
+                                                          .delete(
+                                                        indexedKey,
                                                       );
+                                                      Navigator.of(context)
+                                                          .pop(true);
                                                     },
+                                                    child: const Text(
+                                                      "Yes",
+                                                      style: TextStyle(
+                                                        fontFamily: "Poppins",
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      MaterialButton(
-                                                        onPressed: () {
-                                                          TodoModel changed =
-                                                              TodoModel(
-                                                            title: title,
-                                                            description:
-                                                                description,
-                                                            time: homeController
-                                                                .userSelectedTodoTime,
-                                                          );
-                                                          homeController
-                                                              .todoBox
-                                                              .putAt(index,
-                                                                  changed);
-                                                          Get.back();
-                                                        },
-                                                        child: const Text(
-                                                            "Update"),
-                                                        color: Colors.redAccent,
-                                                        textColor: Colors.white,
-                                                      )
-                                                    ],
+                                                  TextButton(
+                                                    style: ButtonStyle(
+                                                      backgroundColor:
+                                                          MaterialStateProperty
+                                                              .all(
+                                                        Colors.redAccent,
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop(false);
+                                                    },
+                                                    child: const Text(
+                                                      "No",
+                                                      style: TextStyle(
+                                                          fontFamily:
+                                                              "Poppins",
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight
+                                                                  .w500),
+                                                    ),
                                                   ),
-                                                )
-                                              ],
-                                            ),
+                                                ],
+                                              )
+                                            ],
                                           ),
                                         );
-                                      },
-                                    );
-                                  },
-                                  child: ListTile(
-                                    title: Text(
-                                      studentLog!.title.toUpperCase(),
-                                      style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w900),
-                                    ),
-                                    subtitle: Text(
-                                      studentLog.description,
-                                      style: const TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    trailing:
-                                        Text(studentLog.time.split(" ")[0]),
+                                      });
+                                  return res;
+                                } else {
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: GestureDetector(
+                                onTap: () {
+                                  final CustomTimerController _controller =
+                                      CustomTimerController();
+                                  _controller.start();
+                                  debugPrint(
+                                      "SEnding days are ${homeController.numberOfDays[index]}");
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      var title = todoDetails!.title;
+                                      var description =
+                                          todoDetails.description;
+                                      return AlertDialog(
+                                        title: const Text(
+                                          'TASK',
+                                          style: TextStyle(
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                        backgroundColor: Colors.white,
+                                        content: SingleChildScrollView(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Form(
+                                                  child: TextFormField(
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                    ),
+                                                    onChanged: (string) {
+                                                      title = string;
+                                                    },
+                                                    initialValue:
+                                                        (todoDetails.title),
+                                                    validator: (value) {
+                                                      if (value!.isEmpty ||
+                                                          value[0] == " ") {
+                                                        return "This field is required";
+                                                      }
+                                                    },
+                                                    keyboardType:
+                                                        TextInputType.name,
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      icon: Icon(
+                                                        Icons.title,
+                                                        color: Colors.redAccent,
+                                                      ),
+                                                      hintStyle: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontWeight:
+                                                            FontWeight.w900,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Form(
+                                                  child: TextFormField(
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                    ),
+                                                    onChanged: (string) {
+                                                      description = string;
+                                                    },
+                                                    initialValue: todoDetails
+                                                        .description,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty ||
+                                                          value[0] == " ") {
+                                                        return "This field is required";
+                                                      }
+                                                    },
+                                                    autovalidateMode:
+                                                        AutovalidateMode
+                                                            .onUserInteraction,
+                                                    decoration:
+                                                    const InputDecoration(
+                                                      icon:  Icon(
+                                                        Icons.description,
+                                                        color: Colors.redAccent,
+                                                      ),
+                                                      hintText: "Description",
+                                                      hintStyle: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontWeight:
+                                                              FontWeight
+                                                                  .w900),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: CustomTimer(
+                                                  controller: _controller,
+                                                  begin: Duration(
+                                                    days: homeController
+                                                        .numberOfDays[index],
+                                                    hours: homeController
+                                                        .parsedTimeList[index]
+                                                        .hour,
+                                                    minutes: homeController
+                                                        .parsedTimeList[index]
+                                                        .minute,
+                                                  ),
+                                                  end: const Duration(),
+                                                  builder: (time) {
+                                                    return Text(
+                                                      "${time.hours}:${time.minutes}:${time.seconds}",
+                                                      style: const TextStyle(
+                                                        fontSize: 16.0,
+                                                        color: Colors.black,
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    MaterialButton(
+                                                      onPressed: () {
+                                                        TodoModel changed =
+                                                            TodoModel(
+                                                          title: title,
+                                                          description:
+                                                              description,
+                                                          time: homeController
+                                                              .userSelectedTodoTime,
+                                                        );
+                                                        homeController
+                                                            .todoBox
+                                                            .putAt(index,
+                                                                changed);
+                                                        Get.back();
+                                                      },
+                                                      child: const Text(
+                                                          "Update"),
+                                                      color: Colors.redAccent,
+                                                      textColor: Colors.white,
+                                                    )
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: ListTile(
+                                  leading: Icon(Icons.event_note_outlined,size: 40,),
+                                  title: Text(
+                                    todoDetails!.title.toUpperCase(),
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w900),
                                   ),
+                                  subtitle: Text(
+                                    todoDetails.description,
+                                    style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  trailing:
+                                      Text(todoDetails.time.split(" ")[0]),
                                 ),
                               ),
                             ),
@@ -471,7 +472,7 @@ Widget showTimePickerWidget() {
       initialValue: DateTime.now().toString(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
-      icon: const Icon(Icons.event),
+      icon: const Icon(Icons.event,color: Colors.redAccent,),
       dateLabelText: 'Date',
       timeLabelText: "Hour",
       selectableDayPredicate: (date) {
