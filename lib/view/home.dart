@@ -1,9 +1,10 @@
 import 'package:backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:sample_todo/view/widgets.dart';
 
 class Home extends StatelessWidget {
-  const Home({Key? key}) : super(key: key);
+   Home({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +16,14 @@ class Home extends StatelessWidget {
       backLayer: Container(),
       headerHeight: 400.h,
       frontLayer: Scaffold(
-        body: const Padding(padding: EdgeInsets.all(20),
-        child: ,
+        body:  const Padding(padding: EdgeInsets.all(20),
+        child: ListTask(),
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.redAccent,
-          onPressed: (){},
+          onPressed: (){
+            showDialogBox(context);
+          },
           child: const Icon(Icons.add_task),
         ),
         bottomNavigationBar: BottomAppBar(
